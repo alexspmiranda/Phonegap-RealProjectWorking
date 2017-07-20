@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> 
+
+  <title>ajax percentage</title>
+
+<script type='text/javascript'>//<![CDATA[
+	$(window).load(function(){
+		var progressElem = $('#progressCounter');
+		var URL = "http://brazmedchem2016.com.br/webserv/database/json.php?page=sessoes-cientificas";
+		$("#loading").hide();
+		progressElem.text(URL);
+
+
+		$.ajax({
+			type: 'GET',
+			dataType: 'json',
+			url: URL,
+			cache: false,
+			error: function (xhr, ajaxOptions, thrownError) {
+				alert(xhr.responseText);
+				alert(thrownError);
+			},
+			xhr: function () {
+				var xhr = new window.XMLHttpRequest();
+				//Download progress
+				xhr.addEventListener("progress", function (evt) {
+					console.log(evt.lengthComputable);
+					if (evt.lengthComputable) {
+						var percentComplete = evt.loaded / evt.total;
+						progress = Math.round(percentComplete * 100);
+						progressElem.html(progress + "%");
+						
+						
+						var div = document.createElement("progress");
+						div.value = progress;
+						div.max = "100";
+
+						document.body.appendChild(div);
+					}
+				}, false);
+				return xhr;
+			},
+			beforeSend: function () {
+				$('#loading').show();
+			},
+			complete: function () {
+				$("#loading").hide();
+			},
+			success: function (json) {
+				$("#data").html("data receieved");
+				$(document).ready(function()
+			{
+			  $.getJSON(URL,function(result){
+				console.log(result);
+					$.each(result, function(i, field){
+				 
+							var duration=field.introtext;
+					
+						
+						
+						$("#data").append(duration);
+					});
+				});
+			});
+			}
+		});
+	}); 
+
+</script>
+
+  
+</head>
+
+<body>
+	<div id="loading">Loading</div>
+	<div id="data"></div>
+</body>
+
+</html>
+
